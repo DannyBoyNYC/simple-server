@@ -1,33 +1,30 @@
 const express = require('express')
-const { json, urlencoded } = require( 'body-parser')
-// const morgan = require('morgan')
 const app = express()
 
 // MIDDLEWARE
-// posting req.body won't work without this!
-app.use(json())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// custom middleware
-const log = (req, res, next) => {
-  myData = [1,2,3]
-  setTimeout( () =>  next(), 2000)
-}
-// use it for all routes
-app.use(log)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  next();
+});
 
-// ROUTES
 app.get('/', 
-// log, // use it for this route only
 (req, res) => {
-  console.log(myData)
-  res.send({ message: myData })
+  res.send({ message: 'Hello world' })
 })
 
-app.post('/', (req, res) => {
-  res.send({ body: req.body, array: myData})
+app.post('/api', (req, res) => {
+  console.log(' req.body ',  req.body )
+  res.send({ body: req.body})
 })
 
-const port = process.env.PORT || 3456
-// PORT=3001 npm run start
+const port = 3456
 
 app.listen(port, () => (console.log(`starting on port ${port}` )))
